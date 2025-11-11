@@ -36,6 +36,7 @@ interface GraphActions {
   setDirection: (direction: CanvasDirection) => void;
   setViewPort: (ref: ViewPort) => void;
   setSelectedNode: (nodeData: NodeData) => void;
+  updateNodeById: (id: string, updater: (node: NodeData) => NodeData) => void;
   focusFirstNode: () => void;
   toggleFullscreen: (value: boolean) => void;
   zoomIn: () => void;
@@ -101,6 +102,11 @@ const useGraph = create<Graph & GraphActions>((set, get) => ({
   },
   toggleFullscreen: fullscreen => set({ fullscreen }),
   setViewPort: viewPort => set({ viewPort }),
+  updateNodeById: (id, updater) =>
+    set(state => ({
+      nodes: state.nodes.map(n => (n.id === id ? updater(n) : n)),
+      selectedNode: state.selectedNode && state.selectedNode.id === id ? updater(state.selectedNode) : state.selectedNode,
+    })),
 }));
 
 export default useGraph;
